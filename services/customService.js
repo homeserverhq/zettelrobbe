@@ -6,7 +6,6 @@ const {
   assertCompletionNotTruncated,
   isTimeoutError,
   buildTimeoutErrorMessage,
-  toNameList,
 } = require('./serviceUtils');
 const OpenAI = require('openai');
 const config = require('../config/config');
@@ -175,15 +174,6 @@ class CustomOpenAIService {
         await fs.writeFile(cachePath, thumbnailData);
       }
 
-      // Format existing data - callers may hand over entity objects or plain names
-      const existingTagNames = toNameList(existingTags).join(', ');
-      const existingCorrespondentNames = toNameList(
-        existingCorrespondentList
-      ).join(', ');
-      const existingDocumentTypeNames = toNameList(
-        existingDocumentTypesList
-      ).join(', ');
-
       // Get external API data if available and validate it
       let externalApiData = options.externalApiData || null;
       let validatedExternalApiData = null;
@@ -249,12 +239,15 @@ class CustomOpenAIService {
         config.restrictToExistingTags === 'no' &&
         config.restrictToExistingCorrespondents === 'no'
       ) {
+        // Editable "Pre-existing ..." preamble (see config.js). The {{ALL_*}}
+        // placeholders resolve below in processRestrictionsInPrompt; an unset
+        // PRE_EXISTING_DATA_PROMPT falls back to the default template.
+        const preExistingPrompt =
+          process.env.PRE_EXISTING_DATA_PROMPT ||
+          config.preExistingDataPromptTemplate;
         systemPrompt =
-          `
-        Pre-existing tags: ${existingTagNames}\n\n
-        Pre-existing correspondents: ${existingCorrespondentNames}\n\n
-        Pre-existing document types: ${existingDocumentTypeNames}\n\n
-        ` +
+          preExistingPrompt +
+          '\n\n' +
           process.env.SYSTEM_PROMPT +
           '\n\n' +
           config.mustHavePrompt.replace('%CUSTOMFIELDS%', customFieldsStr);

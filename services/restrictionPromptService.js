@@ -72,6 +72,33 @@ class RestrictionPromptService {
       );
     }
 
+    // Replace {{ALL_TAGS}} placeholder. Unlike %RESTRICTED_TAGS% this lists
+    // every existing tag, not a restriction set; it is the templated form of
+    // the "Pre-existing tags:" preamble. Whitespace inside the braces is
+    // tolerated so both {{ALL_TAGS}} and {{ ALL_TAGS }} resolve.
+    if (/{{\s*ALL_TAGS\s*}}/.test(processedPrompt)) {
+      processedPrompt = processedPrompt.replace(
+        /{{\s*ALL_TAGS\s*}}/g,
+        this._formatTagsList(existingTags)
+      );
+    }
+
+    // Replace {{ALL_CORRESPONDENTS}} placeholder
+    if (/{{\s*ALL_CORRESPONDENTS\s*}}/.test(processedPrompt)) {
+      processedPrompt = processedPrompt.replace(
+        /{{\s*ALL_CORRESPONDENTS\s*}}/g,
+        this._formatCorrespondentsList(existingCorrespondentList)
+      );
+    }
+
+    // Replace {{ALL_DOCUMENT_TYPES}} placeholder
+    if (/{{\s*ALL_DOCUMENT_TYPES\s*}}/.test(processedPrompt)) {
+      processedPrompt = processedPrompt.replace(
+        /{{\s*ALL_DOCUMENT_TYPES\s*}}/g,
+        this._formatDocumentTypesList(existingDocumentTypesList)
+      );
+    }
+
     return processedPrompt;
   }
 

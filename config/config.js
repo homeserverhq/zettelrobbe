@@ -618,6 +618,13 @@ module.exports = {
     activateTitle: limitFunctions.activateTitle,
     activateCustomFields: limitFunctions.activateCustomFields,
   },
+  // Full-prompt template for the "Pre-existing tags / correspondents / document
+  // types" block. Only used when USE_EXISTING_DATA is enabled (and not
+  // restricted), where it replaces the previously hard-coded literal. The
+  // {{ALL_*}} placeholders are resolved at runtime by
+  // RestrictionPromptService; the PRE_EXISTING_DATA_PROMPT env var overrides
+  // this default when set.
+  preExistingDataPromptTemplate: `Pre-existing tags: {{ALL_TAGS}}\n\nPre-existing correspondents: {{ALL_CORRESPONDENTS}}\n\nPre-existing document types: {{ALL_DOCUMENT_TYPES}}`,
   specialPromptPreDefinedTags: `You are a document analysis AI. You will analyze the document. 
   You take the main information to associate tags with the document. 
   You will also find the correspondent of the document (Sender not receiver). Also you find a meaningful and short title for the document.

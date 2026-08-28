@@ -2746,6 +2746,7 @@ function initializeRuntimeOverridePills() {
     { selector: '#paperlessUsername', envKey: 'PAPERLESS_USERNAME' },
     { selector: '#scanInterval', envKey: 'SCAN_INTERVAL' },
     { selector: '#useExistingData', envKey: 'USE_EXISTING_DATA' },
+    { selector: '#preExistingDataPrompt', envKey: 'PRE_EXISTING_DATA_PROMPT' },
     { selector: '#showTags', envKey: 'PROCESS_PREDEFINED_DOCUMENTS' },
     { selector: '#ignoreTagInput', envKey: 'IGNORE_TAGS' },
     {

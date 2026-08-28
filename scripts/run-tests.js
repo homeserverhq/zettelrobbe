@@ -81,6 +81,7 @@ const TESTS = {
     'test-prompt-existing-data-serialization.js',
   'restricted-document-types-placeholder':
     'test-restricted-document-types-placeholder.js',
+  'pre-existing-data-prompt': 'test-pre-existing-data-prompt.js',
   'ssrf-url-validation': 'test-ssrf-url-validation.js',
   'external-api-ssrf-block': 'test-external-api-ssrf-block.js',
   'ui-xss-hardening': 'test-ui-xss-hardening.js',
@@ -183,6 +184,7 @@ const AREAS = {
     'updated-service',
     'prompt-existing-data-serialization',
     'restricted-document-types-placeholder',
+    'pre-existing-data-prompt',
   ],
   quickstart: [
     'quickstart-model-classification',

@@ -160,6 +160,12 @@
                                     checked: config.USE_EXISTING_DATA === 'yes',
                                     hint: 'Restart required'
                                 }) %>
+
+                                <div class="zr-field zr-field--stacked">
+                                    <label for="preExistingDataPrompt" class="zr-field__name">Existing data prompt</label>
+                                    <textarea id="preExistingDataPrompt" name="preExistingDataPrompt" rows="6" class="zr-textarea" placeholder="Pre-existing tags: {{ALL_TAGS}}&#10;&#10;Pre-existing correspondents: {{ALL_CORRESPONDENTS}}&#10;&#10;Pre-existing document types: {{ALL_DOCUMENT_TYPES}}"><%= config.PRE_EXISTING_DATA_PROMPT || '' %></textarea>
+                                    <p class="zr-field__hint">Preamble sent before the prompt description when "Use existing correspondents and tags" is enabled. Supports {{ALL_TAGS}}, {{ALL_CORRESPONDENTS}} and {{ALL_DOCUMENT_TYPES}} placeholders. Leave empty for the default. Restart required.</p>
+                                </div>
                                 </div>
                             </section>
 

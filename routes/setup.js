@@ -3742,6 +3742,7 @@ const ENV_EXPORT_GROUPS = [
       'AI_TEMPERATURE_ANALYSIS',
       'AI_TEMPERATURE_GENERATION',
       'SYSTEM_PROMPT',
+      'PRE_EXISTING_DATA_PROMPT',
       'PROMPT_TAGS',
       'ACTIVATE_TAGGING',
       'ACTIVATE_CORRESPONDENTS',
@@ -4562,6 +4563,7 @@ router.get('/setup', async (req, res) => {
       OLLAMA_MODEL: process.env.OLLAMA_MODEL || 'llama3.2',
       SCAN_INTERVAL: process.env.SCAN_INTERVAL || '*/30 * * * *',
       SYSTEM_PROMPT: process.env.SYSTEM_PROMPT || '',
+      PRE_EXISTING_DATA_PROMPT: process.env.PRE_EXISTING_DATA_PROMPT || '',
       PROCESS_PREDEFINED_DOCUMENTS:
         process.env.PROCESS_PREDEFINED_DOCUMENTS || 'no',
       TOKEN_LIMIT: process.env.TOKEN_LIMIT || 128000,
@@ -6745,6 +6747,7 @@ router.get('/settings', async (req, res) => {
     RECONCILIATION_INTERVAL: process.env.RECONCILIATION_INTERVAL || '0 * * * *',
     RECONCILIATION_ENABLED: process.env.RECONCILIATION_ENABLED || 'yes',
     SYSTEM_PROMPT: process.env.SYSTEM_PROMPT || '',
+    PRE_EXISTING_DATA_PROMPT: process.env.PRE_EXISTING_DATA_PROMPT || '',
     PROCESS_PREDEFINED_DOCUMENTS:
       process.env.PROCESS_PREDEFINED_DOCUMENTS || 'no',
 
@@ -8175,6 +8178,10 @@ router.get('/health', async (req, res) => {
  *                 type: string
  *                 description: Custom system prompt for document analysis
  *                 example: "Extract key information from the following document..."
+ *               preExistingDataPrompt:
+ *                 type: string
+ *                 description: Editable preamble sent before the system prompt when USE_EXISTING_DATA is enabled. Supports the {{ALL_TAGS}}, {{ALL_CORRESPONDENTS}} and {{ALL_DOCUMENT_TYPES}} placeholders; leave empty for the default.
+ *                 example: "Pre-existing tags: {{ALL_TAGS}}\n\nPre-existing correspondents: {{ALL_CORRESPONDENTS}}"
  *               showTags:
  *                 type: boolean
  *                 description: Whether to show tags in the UI
@@ -8329,6 +8336,7 @@ router.post('/settings', express.json(), async (req, res) => {
       reconciliationEnabled,
       reconciliationInterval,
       systemPrompt,
+      preExistingDataPrompt,
       showTags,
       tokenLimit,
       responseTokens,
@@ -8403,6 +8411,7 @@ router.post('/settings', express.json(), async (req, res) => {
         process.env.RECONCILIATION_INTERVAL || '0 * * * *',
       RECONCILIATION_ENABLED: process.env.RECONCILIATION_ENABLED || 'yes',
       SYSTEM_PROMPT: process.env.SYSTEM_PROMPT || '',
+      PRE_EXISTING_DATA_PROMPT: process.env.PRE_EXISTING_DATA_PROMPT || '',
       PROCESS_PREDEFINED_DOCUMENTS:
         process.env.PROCESS_PREDEFINED_DOCUMENTS || 'no',
       TOKEN_LIMIT: process.env.TOKEN_LIMIT || 128000,
@@ -8749,6 +8758,11 @@ router.post('/settings', express.json(), async (req, res) => {
     if (systemPrompt)
       updatedConfig.SYSTEM_PROMPT = processedPrompt
         .replace(/\r\n/g, '\n')
+        .replace(/\n/g, '\\n');
+    if (preExistingDataPrompt)
+      updatedConfig.PRE_EXISTING_DATA_PROMPT = preExistingDataPrompt
+        .replace(/\r\n/g, '\n')
+        .replace(/=/g, '')
         .replace(/\n/g, '\\n');
     if (showTags) updatedConfig.PROCESS_PREDEFINED_DOCUMENTS = showTags;
     if (tokenLimit) updatedConfig.TOKEN_LIMIT = tokenLimit;

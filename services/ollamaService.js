@@ -1,4 +1,4 @@
-const { writePromptToFile, toNameList } = require('./serviceUtils');
+const { writePromptToFile } = require('./serviceUtils');
 const axios = require('axios');
 const config = require('../config/config');
 const fs = require('fs').promises;
@@ -386,20 +386,18 @@ class OllamaService {
       config.restrictToExistingTags === 'no' &&
       config.restrictToExistingCorrespondents === 'no'
     ) {
-      // Format existing data - callers may hand over entity objects or plain names
-      const existingTagsList = toNameList(existingTags).join(', ');
-      const existingCorrespondentList =
-        toNameList(correspondentList).join(', ');
-      const existingDocumentTypesList = toNameList(existingDocumentTypes).join(
-        ', '
-      );
+      // The "Pre-existing ..." preamble is a full prompt template now: it can
+      // be overridden via PRE_EXISTING_DATA_PROMPT and carries {{ALL_*}}
+      // placeholders that RestrictionPromptService resolves below. An unset
+      // env var falls back to the default template, so existing setups are
+      // unaffected.
+      const preExistingPrompt =
+        process.env.PRE_EXISTING_DATA_PROMPT ||
+        config.preExistingDataPromptTemplate;
 
       systemPrompt =
-        `
-            Pre-existing tags: ${existingTagsList}\n\n
-            Pre-existing correspondents: ${existingCorrespondentList}\n\n
-            Pre-existing document types: ${existingDocumentTypesList}\n\n
-            ` +
+        preExistingPrompt +
+        '\n\n' +
         process.env.SYSTEM_PROMPT +
         '\n\n' +
         config.mustHavePrompt.replace('%CUSTOMFIELDS%', customFieldsStr);
