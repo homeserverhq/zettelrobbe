@@ -39,6 +39,7 @@ jobs:
   generate-version:
     name: Generate Version Tag
     runs-on: ubuntu-latest
+    if: github.event.repository.fork != true
     outputs:
       version_tag: ${{ steps.version.outputs.tag }}
       base_version: ${{ steps.version.outputs.base }}
@@ -112,6 +113,7 @@ jobs:
     outputs:
       release_commit_sha: ${{ steps.publish.outputs.commit_sha }}
     if: |
+      github.event.repository.fork != true &&
       needs.generate-version.result == 'success' &&
       needs.build-push-lite.result == 'success'
 
@@ -178,6 +180,7 @@ jobs:
     name: Build and Push Image
     runs-on: ubuntu-latest
     needs: [generate-version]
+    if: github.event.repository.fork != true
     outputs:
       image-digest: ${{ steps.push.outputs.digest }}
       base-image: ${{ steps.base.outputs.base_image }}
@@ -250,7 +253,7 @@ jobs:
     name: Build Summary
     runs-on: ubuntu-latest
     needs: [generate-version, build-push-lite, publish-release]
-    if: always() && needs.generate-version.result == 'success'
+    if: github.event.repository.fork != true && always() && needs.generate-version.result == 'success'
 
     steps:
       - name: Generate summary

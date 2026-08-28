@@ -26,6 +26,7 @@ jobs:
   prune:
     name: Prune Old Docker Hub Tags
     runs-on: ubuntu-latest
+    if: github.event.repository.fork != true
 
     steps:
       - name: Authenticate with Docker Hub

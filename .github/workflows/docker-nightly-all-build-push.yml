@@ -36,7 +36,7 @@ jobs:
   validate-options:
     name: Validate Nightly Inputs
     runs-on: ubuntu-latest
-    if: ${{ github.ref_name == 'nightly' }}
+    if: ${{ github.event.repository.fork != true && github.ref_name == 'nightly' }}
 
     steps:
       - name: Set up Docker Buildx
@@ -62,7 +62,7 @@ jobs:
     name: Build Nightly Lite Base
     runs-on: ubuntu-latest
     needs: [validate-options]
-    if: ${{ github.ref_name == 'nightly' && inputs.build_lite_base }}
+    if: ${{ github.event.repository.fork != true && github.ref_name == 'nightly' && inputs.build_lite_base }}
 
     steps:
       - name: Checkout code
@@ -95,7 +95,7 @@ jobs:
     name: Build Nightly App
     runs-on: ubuntu-latest
     needs: [validate-options, build-base-lite]
-    if: ${{ github.ref_name == 'nightly' && inputs.build_lite_app && ((inputs.build_lite_base && needs.build-base-lite.result == 'success') || !inputs.build_lite_base) }}
+    if: ${{ github.event.repository.fork != true && github.ref_name == 'nightly' && inputs.build_lite_app && ((inputs.build_lite_base && needs.build-base-lite.result == 'success') || !inputs.build_lite_base) }}
 
     steps:
       - name: Checkout code

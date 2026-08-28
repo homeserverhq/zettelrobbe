@@ -38,6 +38,7 @@ jobs:
   revert:
     name: Revert version from GitHub and Docker Hub
     runs-on: ubuntu-latest
+    if: github.event.repository.fork != true
 
     steps:
       - name: Normalize input version
